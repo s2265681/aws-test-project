@@ -54,7 +54,7 @@ fi
 
 # 构建后端
 print_message "开始构建后端..."
-cd ../backend
+cd backend
 npm install
 npm run build
 if [ $? -ne 0 ]; then
@@ -64,11 +64,11 @@ fi
 
 # 部署到 S3
 print_message "开始部署前端到 S3... EC2"
-scp $SSH_KEY_OPTION -r ../frontend/dist/* ubuntu@18.141.179.222:/var/www/app/frontend/dist
+scp $SSH_KEY_OPTION -r frontend/dist/* ubuntu@18.141.179.222:/var/www/app/frontend/dist
 
 # 部署到 EC2
 print_message "开始部署后端到 EC2..."
-scp $SSH_KEY_OPTION -r ../backend/dist/* ubuntu@18.141.179.222:/var/www/app/backend
+scp $SSH_KEY_OPTION -r backend/dist/* ubuntu@18.141.179.222:/var/www/app/backend
 
 # 重启后端服务
 print_message "重启后端服务..."
