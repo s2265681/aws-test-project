@@ -65,7 +65,7 @@ export const Login: React.FC = () => {
             loading={healthLoading}
             block
           >
-            检查服务器状态
+            检查服务器状态222
           </Button>
         </Space>
         <Tabs defaultActiveKey="login" centered>

@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# AWS 部署脚本
-
 # 颜色定义
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -17,10 +15,6 @@ print_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
-print_warning() {
-    echo -e "${YELLOW}[WARNING]${NC} $1"
-}
-
 # 检查命令是否存在
 check_command() {
     if ! command -v $1 &> /dev/null; then
@@ -34,12 +28,16 @@ check_command aws
 check_command npm
 check_command node
 
-# 设置 SSH key 路径
-SSH_KEY_PATH="~/.ssh/deploy_key"
+# 设置 SSH key 路径（优先 CI 环境的 deploy_key，否则用本地 pem）
+SSH_KEY_PATH="$HOME/.ssh/deploy_key"
+LOCAL_KEY_PATH="/Users/mac/Github/aws-project-key2.pem"
 if [ -f "$SSH_KEY_PATH" ]; then
     SSH_KEY_OPTION="-i $SSH_KEY_PATH"
+elif [ -f "$LOCAL_KEY_PATH" ]; then
+    SSH_KEY_OPTION="-i $LOCAL_KEY_PATH"
 else
-    SSH_KEY_OPTION="-i /Users/mac/Github/aws-project-key2.pem"
+    print_error "SSH key not found at $SSH_KEY_PATH or $LOCAL_KEY_PATH!"
+    exit 1
 fi
 
 # 构建前端
@@ -47,29 +45,27 @@ print_message "开始构建前端..."
 cd frontend
 npm install
 npm run build
-cd ..
 if [ $? -ne 0 ]; then
     print_error "前端构建失败"
     exit 1
 fi
+cd ..
 
 # 构建后端
 print_message "开始构建后端..."
 cd backend
 npm install
 npm run build
-cd ..
 if [ $? -ne 0 ]; then
     print_error "后端构建失败"
     exit 1
 fi
+cd ..
 
-sleep 5
-# 部署到 S3
+# 部署到 S3/EC2
 print_message "开始部署前端到 S3... EC2"
 scp $SSH_KEY_OPTION -r frontend/dist/* ubuntu@18.141.179.222:/var/www/app/frontend/dist
 
-# 部署到 EC2
 print_message "开始部署后端到 EC2..."
 scp $SSH_KEY_OPTION -r backend/dist/* ubuntu@18.141.179.222:/var/www/app/backend
 
