@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Table, Button, Space, Tag, Tooltip, message, Card } from 'antd';
 import { CheckCircleOutlined, ClockCircleOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import type { Task } from '../types';
-import { taskApi } from '../api';
+import { task } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 
 interface TaskListProps {
@@ -20,7 +20,7 @@ export const TaskList: React.FC<TaskListProps> = ({ onEdit, onRefresh, onAdd }) 
     if (!user) return;
     try {
       setLoading(true);
-      const response = await taskApi.getTasks();
+      const response = await task.getAll();
       setTasks(response.data);
     } catch (error) {
       console.error('获取任务列表失败:', error);
@@ -34,10 +34,10 @@ export const TaskList: React.FC<TaskListProps> = ({ onEdit, onRefresh, onAdd }) 
     fetchTasks();
   }, [user]);
 
-  const handleToggleStatus = async (task: Task) => {
+  const handleToggleStatus = async (taskItem: Task) => {
     try {
-      await taskApi.toggleTaskStatus(task.id);
-      setTasks(tasks.map(t => t.id === task.id ? {
+      await task.toggleStatus(taskItem.id);
+      setTasks(tasks.map(t => t.id === taskItem.id ? {
         ...t,
         status: t.status === 'completed' ? 'pending' : 'completed'
       } : t));
@@ -50,7 +50,7 @@ export const TaskList: React.FC<TaskListProps> = ({ onEdit, onRefresh, onAdd }) 
 
   const handleDelete = async (id: number) => {
     try {
-      await taskApi.deleteTask(id);
+      await task.delete(id);
       message.success('任务已删除');
       setTasks(tasks.filter(t => t.id !== id));
       onRefresh();

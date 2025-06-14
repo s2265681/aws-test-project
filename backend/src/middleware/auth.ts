@@ -23,6 +23,7 @@ export const protect = async (
   res: Response,
   next: NextFunction
 ) => {
+  console.log(res,'res')
   try {
     // 1) 获取token
     let token;

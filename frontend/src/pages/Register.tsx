@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { auth } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 
 const Register: React.FC = () => {
@@ -9,16 +7,12 @@ const Register: React.FC = () => {
     email: '',
     password: '',
   });
-  const navigate = useNavigate();
-  const { setUser } = useAuth();
+  const { register } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await auth.register(formData);
-      localStorage.setItem('token', response.token);
-      setUser(response.user);
-      navigate('/tasks');
+      await register(formData.username, formData.email, formData.password);
     } catch (error) {
       console.error('Registration failed:', error);
     }

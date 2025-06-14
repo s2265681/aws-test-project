@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Card, message, Tabs } from 'antd';
-import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
+import { Form, Input, Button, Card, message, Tabs, Space } from 'antd';
+import { UserOutlined, LockOutlined, MailOutlined, HeartOutlined } from '@ant-design/icons';
 import { useAuth } from '../contexts/AuthContext';
+import { health } from '../services/api';
 
 const { TabPane } = Tabs;
 
 export const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
+  const [healthLoading, setHealthLoading] = useState(false);
   const { login, register } = useAuth();
 
   const handleLogin = async (values: { email: string; password: string }) => {
@@ -31,6 +33,22 @@ export const Login: React.FC = () => {
     }
   };
 
+  const handleHealthCheck = async () => {
+    try {
+      setHealthLoading(true);
+      const response = await health.check();
+      if (response.data.status === 'healthy') {
+        message.success('服务器状态正常');
+      } else {
+        message.warning('服务器状态异常');
+      }
+    } catch {
+      message.error('服务器连接失败');
+    } finally {
+      setHealthLoading(false);
+    }
+  };
+
   return (
     <div style={{ 
       display: 'flex', 
@@ -40,6 +58,16 @@ export const Login: React.FC = () => {
       background: '#f0f2f5'
     }}>
       <Card style={{ width: 400, boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }}>
+        <Space direction="vertical" style={{ width: '100%', marginBottom: 16 }}>
+          <Button 
+            icon={<HeartOutlined />} 
+            onClick={handleHealthCheck} 
+            loading={healthLoading}
+            block
+          >
+            检查服务器状态
+          </Button>
+        </Space>
         <Tabs defaultActiveKey="login" centered>
           <TabPane tab="登录" key="login">
             <Form

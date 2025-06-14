@@ -55,15 +55,15 @@ if [ $? -ne 0 ]; then
 fi
 
 # 部署到 S3
-print_message "开始部署前端到 S3..."
-aws s3 sync ../frontend/dist s3://your-bucket-name --delete
+print_message "开始部署前端到 S3... EC2"
+scp -i /Users/mac/Github/aws-project-key2.pem -r ../frontend/dist/* ubuntu@18.141.179.222:/var/www/app/frontend/dist
 
 # 部署到 EC2
 print_message "开始部署后端到 EC2..."
-scp -i your-key.pem -r ../backend/dist/* ec2-user@your-ec2-instance:/var/www/backend/
+scp -i /Users/mac/Github/aws-project-key2.pem -r ../backend/dist/* ubuntu@18.141.179.222:/var/www/app/backend
 
 # 重启后端服务
-print_message "重启后端服务..."
-ssh -i your-key.pem ec2-user@your-ec2-instance "cd /var/www/backend && pm2 restart all"
+# print_message "重启后端服务..."
+# ssh -i /Users/mac/Github/aws-project-key2.pem ubuntu@18.141.179.222 "cd /var/www/app/backend && pm2 start ecosystem.config.js"
 
 print_message "部署完成！" 

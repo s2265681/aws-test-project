@@ -6,7 +6,7 @@ import { TaskList } from './components/TaskList';
 import { Layout } from './components/Layout';
 import { Modal, Form, Input, message, Button } from 'antd';
 import type { Task } from './types';
-import { taskApi } from './api';
+import { task } from './services/api';
 import './App.css'
 
 // 受保护的路由组件
@@ -45,19 +45,17 @@ const TaskPage: React.FC = () => {
   const handleSubmit = async (values: { title: string; description: string }) => {
     try {
       if (editingTask) {
-        await taskApi.updateTask(editingTask.id, values);
+        await task.update(editingTask.id, values);
         message.success('任务已更新');
       } else {
-        await taskApi.createTask({
-          ...values,
-          status: 'pending'
-        });
+        await task.create(values);
         message.success('任务已创建');
       }
+      form.resetFields();
       setIsModalVisible(false);
       setRefreshKey(prev => prev + 1);
     } catch {
-      message.error(editingTask ? '更新任务失败' : '创建任务失败');
+      message.error('操作失败');
     }
   };
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Task } from '../types/task';
-import { taskService } from '../services/task';
+import { task } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import { Modal, Form, Input, Button, message } from 'antd';
 
@@ -26,8 +26,8 @@ export const TaskList: React.FC = () => {
 
   const fetchTasks = async () => {
     try {
-      const data = await taskService.getAll();
-      setTasks(data);
+      const response = await task.getAll();
+      setTasks(response.data);
       setError(null);
     } catch {
       setError('Failed to fetch tasks');
@@ -38,9 +38,8 @@ export const TaskList: React.FC = () => {
 
   const handleCreateTaskAntd = async (values: { title: string; description: string }) => {
     try {
-      const newTask = await taskService.create(values);
-      console.log(newTask,'newTask....')
-      setTasks([newTask, ...tasks]);
+      const response = await task.create(values);
+      setTasks([response.data, ...tasks]);
       setIsModalOpen(false);
       setFormData({ title: '', description: '' });
       message.success('Task created!');
@@ -54,8 +53,8 @@ export const TaskList: React.FC = () => {
   const handleUpdateTaskAntd = async (values: { title: string; description: string }) => {
     if (!editingTask) return;
     try {
-      const updatedTask = await taskService.update(editingTask.id, values);
-      setTasks(tasks.map(task => (task.id === updatedTask.id ? updatedTask : task)));
+      const response = await task.update(editingTask.id, values);
+      setTasks(tasks.map(task => (task.id === response.data.id ? response.data : task)));
       setEditingTask(null);
       setIsModalOpen(false);
       setFormData({ title: '', description: '' });
@@ -69,7 +68,7 @@ export const TaskList: React.FC = () => {
 
   const handleDeleteTask = async (id: number) => {
     try {
-      await taskService.delete(id);
+      await task.delete(id);
       setTasks(tasks.filter(task => task.id !== id));
     } catch {
       setError('Failed to delete task');
@@ -78,9 +77,9 @@ export const TaskList: React.FC = () => {
 
   const handleToggleStatus = async (id: number) => {
     try {
-      const updatedTask = await taskService.toggleStatus(id);
+      const response = await task.toggleStatus(id);
       setTasks(tasks.map(task => 
-        task.id === updatedTask.id ? updatedTask : task
+        task.id === response.data.id ? response.data : task
       ));
     } catch {
       setError('Failed to toggle task status');
