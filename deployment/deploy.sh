@@ -44,7 +44,7 @@ fi
 
 # 构建前端
 print_message "开始构建前端..."
-cd ../frontend
+cd frontend
 npm install
 npm run build
 if [ $? -ne 0 ]; then
