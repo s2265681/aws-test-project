@@ -35,5 +35,5 @@ jobs:
         ssh-keyscan -H 18.141.179.222 >> ~/.ssh/known_hosts
         
         # 执行部署脚本
-        chmod +x deployment/deploy.sh
-        ./deployment/deploy.sh 
+        chmod +x deploy.sh
+        ./deploy.sh 
