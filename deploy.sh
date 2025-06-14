@@ -47,6 +47,7 @@ print_message "开始构建前端..."
 cd frontend
 npm install
 npm run build
+cd ..
 if [ $? -ne 0 ]; then
     print_error "前端构建失败"
     exit 1
@@ -57,11 +58,13 @@ print_message "开始构建后端..."
 cd backend
 npm install
 npm run build
+cd ..
 if [ $? -ne 0 ]; then
     print_error "后端构建失败"
     exit 1
 fi
 
+sleep 5
 # 部署到 S3
 print_message "开始部署前端到 S3... EC2"
 scp $SSH_KEY_OPTION -r frontend/dist/* ubuntu@18.141.179.222:/var/www/app/frontend/dist
