@@ -7,11 +7,18 @@ import { AppError } from '../middleware/errorHandler';
 const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-2024';
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 
-const signToken = (id: number): string => {
+const signToken = (user: { id: number; username: string }): string => {
   const options: SignOptions = {
     expiresIn: JWT_EXPIRES_IN as jwt.SignOptions['expiresIn']
   };
-  return jwt.sign({ id }, JWT_SECRET, options);
+  return jwt.sign(
+    { 
+      id: user.id, 
+      username: user.username 
+    }, 
+    JWT_SECRET, 
+    options
+  );
 };
 
 export const register = async (
@@ -22,7 +29,7 @@ export const register = async (
   try {
     const { username, email, password } = req.body;
 
-    // 检查用户是否已存在
+    // 检查邮箱是否已存在
     const existingUser = await UserModel.findByEmail(email);
     if (existingUser) {
       return next(new AppError('该邮箱已被注册', 400));
@@ -36,7 +43,7 @@ export const register = async (
     });
 
     // 生成 token
-    const token = signToken(user.id as number);
+    const token = signToken({ id: user.id as number, username: user.username });
 
     // 移除密码
     const { password: _, ...userWithoutPassword } = user;
@@ -60,21 +67,27 @@ export const login = async (
 ) => {
   try {
     const { email, password } = req.body;
+    console.log('Login attempt:', { email });
 
     // 检查用户是否存在
     const user = await UserModel.findByEmail(email);
+    console.log('User found:', user ? 'yes' : 'no');
+    
     if (!user) {
-      return next(new AppError('邮箱或密码错误', 401));
+      return next(new AppError('邮箱或密码错误', 400));
     }
 
     // 验证密码
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
+    console.log('Password correct:', isPasswordCorrect);
+    
     if (!isPasswordCorrect) {
-      return next(new AppError('邮箱或密码错误', 401));
+      return next(new AppError('邮箱或密码错误', 400));
     }
 
     // 生成 token
-    const token = signToken(user.id as number);
+    const token = signToken({ id: user.id as number, username: user.username });
+    console.log('Token generated:', token);
 
     // 移除密码
     const { password: _, ...userWithoutPassword } = user;
@@ -87,6 +100,7 @@ export const login = async (
       }
     });
   } catch (error) {
+    console.error('Login error:', error);
     next(error);
   }
 };

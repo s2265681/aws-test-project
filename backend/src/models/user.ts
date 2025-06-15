@@ -13,6 +13,7 @@ export interface User {
 
 export class UserModel {
   static async create(user: User): Promise<User> {
+    console.log('Creating user:', { username: user.username, email: user.email });
     const hashedPassword = await bcrypt.hash(user.password, 12);
     
     // 先插入数据
@@ -35,24 +36,29 @@ export class UserModel {
       .where('email', '=', user.email)
       .executeTakeFirstOrThrow();
 
+    console.log('User created:', { id: inserted.id, username: inserted.username });
     return inserted;
   }
 
   static async findByEmail(email: string): Promise<User | null> {
+    console.log('Finding user by email:', email);
     const user = await db
       .selectFrom('users')
       .selectAll()
       .where('email', '=', email)
       .executeTakeFirst();
+    console.log('User found:', user ? { id: user.id, username: user.username } : 'null');
     return user || null;
   }
 
   static async findById(id: number): Promise<User | null> {
+    console.log('Finding user by id:', id);
     const user = await db
       .selectFrom('users')
       .selectAll()
       .where('id', '=', id)
       .executeTakeFirst();
+    console.log('User found:', user ? { id: user.id, username: user.username } : 'null');
     return user || null;
   }
 

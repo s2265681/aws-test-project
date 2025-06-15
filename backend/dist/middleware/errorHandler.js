@@ -12,7 +12,6 @@ class AppError extends Error {
 }
 exports.AppError = AppError;
 const errorHandler = (err, req, res, next) => {
-    console.log(res, req, next);
     if (err instanceof AppError) {
         return res.status(err.statusCode).json({
             status: err.status,

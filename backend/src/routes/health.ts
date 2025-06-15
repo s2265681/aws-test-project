@@ -4,7 +4,6 @@ import { db } from '../database/index';
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-  console.log(req,'req')
   try {
     // 检查数据库连接
     await db.selectFrom('users').select('id').limit(1).execute();

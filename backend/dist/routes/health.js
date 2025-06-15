@@ -7,7 +7,6 @@ const express_1 = __importDefault(require("express"));
 const index_1 = require("../database/index");
 const router = express_1.default.Router();
 router.get('/', async (req, res) => {
-    console.log(req, 'req');
     try {
         await index_1.db.selectFrom('users').select('id').limit(1).execute();
         res.json({

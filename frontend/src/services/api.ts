@@ -1,9 +1,11 @@
 import axios from 'axios';
 import type { User } from '../types/user';
 import type { Task, CreateTaskData, UpdateTaskData } from '../types/task';
+import { message } from 'antd';
 
-const API_URL = 'http://18.141.179.222/api';
-// const API_URL = 'http://localhost:3000/api';
+const API_URL = process.env.NODE_ENV === 'production' 
+  ? 'http://18.141.179.222/api'
+  : 'http://localhost:3000/api';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -32,7 +34,10 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
-      window.location.href = '/auth';
+      message.error('登录已过期，请重新登录');
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 1500);
     }
     return Promise.reject(error);
   }

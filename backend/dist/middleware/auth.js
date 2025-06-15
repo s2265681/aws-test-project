@@ -8,7 +8,6 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const errorHandler_1 = require("./errorHandler");
 const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-2024';
 const protect = async (req, res, next) => {
-    console.log(res, 'res');
     try {
         let token;
         if (req.headers.authorization &&

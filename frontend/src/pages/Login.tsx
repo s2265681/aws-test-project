@@ -14,6 +14,7 @@ export const Login: React.FC = () => {
   const handleLogin = async (values: { email: string; password: string }) => {
     try {
       setLoading(true);
+      message.success('登录中')
       await login(values.email, values.password);
     } catch {
       message.error('登录失败，请检查邮箱和密码');
@@ -58,7 +59,7 @@ export const Login: React.FC = () => {
       background: '#f0f2f5'
     }}>
       <Card style={{ width: 400, boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }}>
-        {/* <Space direction="vertical" style={{ width: '100%', marginBottom: 16 }}>
+        <Space direction="vertical" style={{ width: '100%', marginBottom: 16 }}>
           <Button 
             icon={<HeartOutlined />} 
             onClick={handleHealthCheck} 
@@ -67,7 +68,7 @@ export const Login: React.FC = () => {
           >
             检查服务器状态
           </Button>
-        </Space> */}
+        </Space>
         <Tabs defaultActiveKey="login" centered>
           <TabPane tab="登录" key="login">
             <Form
