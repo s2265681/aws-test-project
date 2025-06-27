@@ -119,22 +119,24 @@ const TaskPage: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <Router>
-      <AuthProvider>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route
-            path="/tasks"
-            element={
-              <PrivateRoute>
-                <TaskPage />
-              </PrivateRoute>
-            }
-          />
-          <Route path="/" element={<Navigate to="/tasks" />} />
-        </Routes>
-      </AuthProvider>
-    </Router>
+    <div className="texture">
+      <Router>
+        <AuthProvider>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route
+              path="/tasks"
+              element={
+                <PrivateRoute>
+                  <TaskPage />
+                </PrivateRoute>
+              }
+            />
+            <Route path="/" element={<Navigate to="/tasks" />} />
+          </Routes>
+        </AuthProvider>
+      </Router>
+    </div>
   );
 };
 
