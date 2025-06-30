@@ -66,15 +66,13 @@ cd ..
 print_message "开始部署前端到 S3... EC2"
 scp $SSH_KEY_OPTION -r frontend/dist/* ubuntu@18.141.179.222:/var/www/app/frontend/dist
 
-print_message "开始部署后端到 EC2..."
+print_message "开始部署后端到 EC2...222"
 scp $SSH_KEY_OPTION -r backend/dist/* ubuntu@18.141.179.222:/var/www/app/backend
+print_message "开始部署env..."   
+scp $SSH_KEY_OPTION -r backend/.env ubuntu@18.141.179.222:/var/www/app/backend/.env
 
 # 重启后端服务
 print_message "重启后端服务..."
 ssh $SSH_KEY_OPTION ubuntu@18.141.179.222 "cd /var/www/app/backend && nodemon index.js"
-
-# 打印内容
-print_message "打印后端内容..."
-echo -e "${ls -l} /var/www/app/backend"
 
 print_message "部署完成！" 
