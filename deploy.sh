@@ -69,7 +69,7 @@ scp $SSH_KEY_OPTION -r frontend/dist/* ubuntu@18.141.179.222:/var/www/app/fronte
 print_message "开始部署后端到 EC2...222"
 scp $SSH_KEY_OPTION -r backend/dist/* ubuntu@18.141.179.222:/var/www/app/backend
 print_message "开始部署env..."   
-scp $SSH_KEY_OPTION -r backend/.env ubuntu@18.141.179.222:/var/www/app/backend/.env
+scp $SSH_KEY_OPTION -r backend/.env.production ubuntu@18.141.179.222:/var/www/app/backend/.env
 
 # 重启后端服务
 print_message "重启后端服务..."
