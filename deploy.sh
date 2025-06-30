@@ -73,4 +73,7 @@ scp $SSH_KEY_OPTION -r backend/dist/* ubuntu@18.141.179.222:/var/www/app/backend
 print_message "重启后端服务..."
 ssh $SSH_KEY_OPTION ubuntu@18.141.179.222 "cd /var/www/app/backend && nodemon index.js"
 
+# 打印内容
+echo -e "${ls -l} /var/www/app/backend"
+
 print_message "部署完成！" 
