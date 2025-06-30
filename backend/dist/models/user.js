@@ -9,6 +9,7 @@ const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const kysely_1 = require("kysely");
 class UserModel {
     static async create(user) {
+        console.log('Creating user:', { username: user.username, email: user.email });
         const hashedPassword = await bcryptjs_1.default.hash(user.password, 12);
         await database_1.db
             .insertInto('users')
@@ -26,22 +27,27 @@ class UserModel {
             .selectAll()
             .where('email', '=', user.email)
             .executeTakeFirstOrThrow();
+        console.log('User created:', { id: inserted.id, username: inserted.username });
         return inserted;
     }
     static async findByEmail(email) {
+        console.log('Finding user by email:', email);
         const user = await database_1.db
             .selectFrom('users')
             .selectAll()
             .where('email', '=', email)
             .executeTakeFirst();
+        console.log('User found:', user ? { id: user.id, username: user.username } : 'null');
         return user || null;
     }
     static async findById(id) {
+        console.log('Finding user by id:', id);
         const user = await database_1.db
             .selectFrom('users')
             .selectAll()
             .where('id', '=', id)
             .executeTakeFirst();
+        console.log('User found:', user ? { id: user.id, username: user.username } : 'null');
         return user || null;
     }
     static async update(id, user) {

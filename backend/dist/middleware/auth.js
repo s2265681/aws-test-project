@@ -6,7 +6,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.protect = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const errorHandler_1 = require("./errorHandler");
-const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-2024';
+if (!process.env.JWT_SECRET) {
+    console.error('JWT_SECRET is not set in environment variables');
+    process.exit(1);
+}
+const JWT_SECRET = process.env.JWT_SECRET;
 const protect = async (req, res, next) => {
     try {
         let token;
@@ -17,11 +21,20 @@ const protect = async (req, res, next) => {
         if (!token) {
             return next(new errorHandler_1.AppError('请先登录', 401));
         }
-        const decoded = jsonwebtoken_1.default.verify(token, JWT_SECRET);
-        req.user = decoded;
-        next();
+        try {
+            const decoded = jsonwebtoken_1.default.verify(token, JWT_SECRET);
+            console.log('Decoded token:', decoded);
+            req.user = decoded;
+            console.log('User set in request:', req.user);
+            next();
+        }
+        catch (jwtError) {
+            console.error('JWT verification error:', jwtError);
+            return next(new errorHandler_1.AppError('认证失败: ' + jwtError.message, 401));
+        }
     }
     catch (error) {
+        console.error('Auth error:', error);
         next(new errorHandler_1.AppError('认证失败', 401));
     }
 };

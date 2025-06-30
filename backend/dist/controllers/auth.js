@@ -10,11 +10,14 @@ const user_1 = require("../models/user");
 const errorHandler_1 = require("../middleware/errorHandler");
 const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-2024';
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
-const signToken = (id) => {
+const signToken = (user) => {
     const options = {
         expiresIn: JWT_EXPIRES_IN
     };
-    return jsonwebtoken_1.default.sign({ id }, JWT_SECRET, options);
+    return jsonwebtoken_1.default.sign({
+        id: user.id,
+        username: user.username
+    }, JWT_SECRET, options);
 };
 const register = async (req, res, next) => {
     try {
@@ -28,7 +31,7 @@ const register = async (req, res, next) => {
             email,
             password
         });
-        const token = signToken(user.id);
+        const token = signToken({ id: user.id, username: user.username });
         const { password: _, ...userWithoutPassword } = user;
         res.status(201).json({
             status: 'success',
@@ -46,15 +49,19 @@ exports.register = register;
 const login = async (req, res, next) => {
     try {
         const { email, password } = req.body;
+        console.log('Login attempt:', { email });
         const user = await user_1.UserModel.findByEmail(email);
+        console.log('User found:', user ? 'yes' : 'no');
         if (!user) {
-            return next(new errorHandler_1.AppError('邮箱或密码错误', 401));
+            return next(new errorHandler_1.AppError('邮箱或密码错误', 400));
         }
         const isPasswordCorrect = await bcryptjs_1.default.compare(password, user.password);
+        console.log('Password correct:', isPasswordCorrect);
         if (!isPasswordCorrect) {
-            return next(new errorHandler_1.AppError('邮箱或密码错误', 401));
+            return next(new errorHandler_1.AppError('邮箱或密码错误', 400));
         }
-        const token = signToken(user.id);
+        const token = signToken({ id: user.id, username: user.username });
+        console.log('Token generated:', token);
         const { password: _, ...userWithoutPassword } = user;
         res.status(200).json({
             status: 'success',
@@ -65,6 +72,7 @@ const login = async (req, res, next) => {
         });
     }
     catch (error) {
+        console.error('Login error:', error);
         next(error);
     }
 };
