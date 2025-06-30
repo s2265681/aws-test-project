@@ -41,7 +41,7 @@ else
 fi
 
 # 构建前端
-print_message "开始构建前端..."
+print_message "开始构建前端...000"
 cd frontend
 npm install
 npm run build
