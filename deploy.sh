@@ -73,6 +73,6 @@ scp $SSH_KEY_OPTION -r backend/.env.production ubuntu@18.141.179.222:/var/www/ap
 
 # 重启后端服务
 print_message "重启后端服务..."
-ssh $SSH_KEY_OPTION ubuntu@18.141.179.222 "cd /var/www/app/backend && nodemon index.js"
+ssh $SSH_KEY_OPTION ubuntu@18.141.179.222 "cd /var/www/app/backend && pm2 restart aws-test-backend || pm2 start dist/index.js --name aws-test-backend"
 
 print_message "部署完成！" 
