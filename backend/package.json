@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node dist/index.js",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "build": "tsc && cp package.json dist/ && cp deploy.sh dist/ && cp .env.production dist/.env",
+    "build": "tsc && cp package.json dist/ && cp .env.production dist/.env",
     "lint": "eslint . --ext .ts",
     "test": "jest",
     "migrate": "ts-node src/database/migrate.ts",
