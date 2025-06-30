@@ -6,12 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '../contexts/AuthContext';
 import ss from './ss.png';
-import { Heart } from 'lucide-react';
-import { health } from '@/services/api';
+// import { Heart } from 'lucide-react';
+// import { health } from '@/services/api';
 
 export const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
-  const [healthLoading, setHealthLoading] = useState(false);
+  // const [healthLoading, setHealthLoading] = useState(false);
   const { login, register } = useAuth();
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -48,21 +48,21 @@ export const Login: React.FC = () => {
     }
   };
 
-  const handleHealthCheck = async () => {
-    try {
-      setHealthLoading(true);
-      const response = await health.check();
-      if (response.data.status === 'healthy') {
-        console.log('服务器状态正常');
-      } else {
-        console.warn('服务器状态异常');
-      }
-    } catch {
-      console.error('服务器连接失败');
-    } finally {
-      setHealthLoading(false);
-    }
-  };
+  // const handleHealthCheck = async () => {
+  //   try {
+  //     setHealthLoading(true);
+  //     const response = await health.check();
+  //     if (response.data.status === 'healthy') {
+  //       console.log('服务器状态正常');
+  //     } else {
+  //       console.warn('服务器状态异常');
+  //     }
+  //   } catch {
+  //     console.error('服务器连接失败');
+  //   } finally {
+  //     setHealthLoading(false);
+  //   }
+  // };
 
   return (
     <div className="flex w-full h-screen">
@@ -75,7 +75,7 @@ export const Login: React.FC = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <Button 
+            {/* <Button 
               variant="outline"
               onClick={handleHealthCheck} 
               disabled={healthLoading}
@@ -83,7 +83,7 @@ export const Login: React.FC = () => {
             >
               <Heart className="mr-2 h-4 w-4" />
               {healthLoading ? '检查中...' : '检查服务器状态'}
-            </Button>
+            </Button> */}
 
             <Tabs defaultValue="login" className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-2">
